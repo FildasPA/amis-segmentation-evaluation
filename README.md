@@ -22,3 +22,9 @@ optional arguments:
   -w WORDS, --words WORDS
                         Define the number of words to print; 0 will print full sentences
 ```
+
+## Test
+
+Run:
+
+`python eval.py auto.txt manuel.txt -v -c -w 0`
