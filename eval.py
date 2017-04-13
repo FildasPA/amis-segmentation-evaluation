@@ -117,6 +117,33 @@ def print_unmatching_sentence(line, i, type):
     print color(str(type) + " " + str(i), Colors.YELLOW),
     print cut_sentence(line, words_to_print)
 
+def format_ref_line(line):
+    """Formate une ligne issue de la transcription manuelle.
+    Plus on effectue de transformations, plus on est "tolérant" avec le
+    transcripteur automatique.
+    """
+    # Supprime pX \t
+    if not line:
+        return ""
+    line = line.split(' ',1)[1]
+    # Passage aux minuscules
+    line = line.lower()
+    # Supprime les espaces en trop
+    line = line.strip()
+    # Supprime la ponctuation en trop
+    line = line.replace('.','')
+    line = line.replace(',','')
+    line = line.replace(';','')
+    line = line.replace('"','')
+    line = line.replace(':','')
+    line = line.replace('!','')
+    line = line.replace('?','')
+    # Sépare les apostropes du mot qui les suit
+    line = line.replace('l\'','l\' ')
+    line = line.replace('d\'','d\' ')
+    line = line.replace('s\'','s\' ')
+    return line
+
 def right_cut(eval_line, ref_line):
     """Tell if ending lines match."""
     eval_line = eval_line.replace(' .','')
@@ -136,7 +163,7 @@ def count_right_cuts(eval_filename, ref_filename):
 
     # Lis les premières lignes du fichier de référence
     for i in range(0, 10):
-        ref_line = ref_file.readline().strip()
+        ref_line = format_ref_line(ref_file.readline().strip())
         ref_lines += [ref_line]
 
     coupe_ok = 0
@@ -167,7 +194,8 @@ def count_right_cuts(eval_filename, ref_filename):
             num_ref_line += 1
 
         found = False
-        ref_lines += [ref_file.readline().strip()]
+        ref_line = format_ref_line(ref_file.readline().strip())
+        ref_lines += [ref_line]
 
     if display_unmatching_sentences:
         print color("Unmatching sentences within evaluated file:", Colors.RED)
